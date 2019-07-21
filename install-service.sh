@@ -68,6 +68,7 @@ if [ "$PREEMPT" == "yes" ]; then
 	EXTRA_ARGS+=' --preempt'
 fi
 
+chmod +x fan.py
 cp fan.py /usr/local/bin
 
 cat <<EOF
