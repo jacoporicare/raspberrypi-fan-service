@@ -7,15 +7,10 @@ import signal
 import sys
 
 
-T_MIN = 35
-T_MAX = 95
-
-PIN_FAN = 17
-
-
 parser = argparse.ArgumentParser()
+parser.add_argument('--pin', type=int, default=17, help='Fan PIN number (BCM)')
 parser.add_argument('--off-threshold', type=float, default=55.0,
-                    help='Temperature threshold in degrees C to enable fan')
+                    help='Temperatxure threshold in degrees C to enable fan')
 parser.add_argument('--on-threshold', type=float, default=65.0,
                     help='Temperature threshold in degrees C to disable fan')
 parser.add_argument('--delay', type=float, default=2.0,
@@ -29,7 +24,7 @@ args = parser.parse_args()
 
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN_FAN, GPIO.OUT)
+GPIO.setup(args.pin, GPIO.OUT)
 
 
 def clean_exit():
@@ -59,7 +54,7 @@ def get_cpu_freq():
 def set_fan(status):
     global enabled
     if status != enabled:
-        GPIO.output(PIN_FAN, status)
+        GPIO.output(args.pin, status)
     enabled = status
 
 

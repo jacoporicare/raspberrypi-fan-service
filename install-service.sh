@@ -12,6 +12,7 @@ if ! [ -f "/usr/bin/python3" ]; then
 	exit 1
 fi
 
+PIN=17
 ON_THRESHOLD=65
 OFF_THRESHOLD=55
 DELAY=2
@@ -23,7 +24,12 @@ SERVICE_PATH=/etc/systemd/system/fan.service
 while [[ $# -gt 0 ]]; do
 	K="$1"
 	case $K in
-	-p | --preempt)
+	--pin)
+		PIN="$2"
+		shift
+		shift
+		;;
+	--preempt)
 		if [ "$2" == "yes" ] || [ "$2" == "no" ]; then
 			PREEMPT="$2"
 			shift
@@ -42,7 +48,7 @@ while [[ $# -gt 0 ]]; do
 		shift
 		shift
 		;;
-	-d | --delay)
+	--delay)
 		DELAY="$2"
 		shift
 		shift
@@ -66,13 +72,14 @@ cp fan.py /usr/local/bin
 
 cat <<EOF
 Setting up with:
+PIN: $PIN
 Off Threshold: $OFF_THRESHOLD C
 On Threshold: $ON_THRESHOLD C
 Delay: $DELAY seconds
 Preempt: $PREEMPT
 
 To change these options, run:
-sudo ./install-service.sh [--off-threshold <temp>] [--on-threshold <temp>] [--delay <seconds>] [--preempt]
+sudo ./install-service.sh [--pin <pin>] [--off-threshold <temp>] [--on-threshold <temp>] [--delay <seconds>] [--preempt]
 
 Or edit: $SERVICE_PATH
 
@@ -87,7 +94,7 @@ After=multi-user.target
 [Service]
 Type=simple
 WorkingDirectory=/usr/local/bin
-ExecStart=/usr/local/bin/fan.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY $EXTRA_ARGS
+ExecStart=/usr/local/bin/fan.py --pin $PIN --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY $EXTRA_ARGS
 Restart=on-failure
 
 [Install]
